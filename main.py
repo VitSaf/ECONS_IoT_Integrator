@@ -17,7 +17,7 @@ def proto(eui):
 
 
 def getChannel():
-	return grpc.insecure_channel('127.0.0.1:7655')
+	return grpc.insecure_channel('127.0.0.1:7655')#Прописать IP IoT платформы
 
 def getDevices(channel):
 	stub = iiot_device_pb2_grpc.IotDeviceStub(channel)
@@ -49,10 +49,9 @@ channel = getChannel()
 euis = getEuiList(getDevices(channel).devices)
 lastDataResponse = getDeviceData(euis, channel)
 mesData = toMesData(lastDataResponse)
-#Здесь парсер в xml
 toXML(mesData)
 
-#Для тестирования
+#Для тестирования xml парсера
 #testData = []
 #testData.append(md.MesData('1313FA534.123', '2019-04-16 14:35:00', 55))
 #testData.append(md.MesData('1313123135252FA534.321', '2017-04-16 14:35:00', 75))

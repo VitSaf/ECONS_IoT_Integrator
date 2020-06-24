@@ -47,6 +47,6 @@ def toXML(mesDataObjList):
 		dataQ = xml.SubElement(data, 'DataQuality')
 		dataQ.text = 'Good'
 	root = prettify(root)
-	file = open('test2.xml', 'w')
+	file = open('test2.xml', 'w')#Прописать название файла для ЭКОНС файл ридера(да и путь)
 	file.write(root)
 
