@@ -9,28 +9,24 @@ import xml.etree.ElementTree as xml
 from xml.etree import ElementTree
 from xml.dom import minidom
 
+#Класс для инкапсуляции данных
 class MesData(object):
-	
-	#String TagName
-	#String ts
-	#double value
-
-
+	#Конструктор класса
 	def __init__(self, TAGName, ts, v):
 		self.TAGName = TAGName
 		self.ts = ts
 		self.value = v
-
-	def show(self):
-		print("Tag name = ", self.TAGName)
-		print("Timestamp = ", self.ts)
-		print("Value = ", self.value)
-
+#преобразует xml файл к читабельному человеком виду
+#(красивая разметка)	
 def prettify(elem):
 	rough_string = ElementTree.tostring(elem, 'utf-8')
 	reparsed = minidom.parseString(rough_string)
 	return reparsed.toprettyxml(indent="  ")
 
+#функция, генерирующая xml файл
+#в теле функции задается структура файла, версия и содержимое
+#Всё это определялось требованиями сервера ЭКОНС
+#т.к он читает только xml файлы строго определенной иерархии
 def toXML(mesDataObjList):
 	root = xml.Element('Import')
 	dataList = xml.Element('DataList')
