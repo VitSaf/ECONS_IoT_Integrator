@@ -23,9 +23,10 @@ IOT_IP = '127.0.0.1:7655'
 #функция для аутентификации в siauth
 def get_token():
 	#создаем HTTP запрос с данными аутентификации
-	response = request.get(URL_DEV, auth=(LOGIN, PASSWORD))
+	post_data = '{"basic_authentication":{"login:"","password":""}}'
+	response = requests.post(URL_DEV, data = post_data)
 	#получаем ответ, где по пути response.data.key.token находится действующий токен 
-	return response.data.key.token
+	return response.json()#.data.key.token
 
 #функция, собирающая объект аргумента для передачи по grpc (в соотвествии с proto файлом) 
 def proto(eui, token):
@@ -80,7 +81,7 @@ def toMesData(lastDataResponse):
 
 #Вызовы функций
 channel = getChannel()#создаем канал для подключения по grpc
-token = get_token()#получаем токен от siauth
+#token = get_token()#получаем токен от siauth
 euis = getEuiList(getDevices(channel, token).devices)#получаем список всех устройств на сервере ИоТ
 lastDataResponse = getDeviceData(euis, channel, token)#получаем последнюю информацию с этих устройств
 mesData = toMesData(lastDataResponse)#создаем объекты с информацией от датчиков(дата, имя, значение)
