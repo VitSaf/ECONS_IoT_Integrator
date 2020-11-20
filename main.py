@@ -17,16 +17,19 @@ LOGIN = ''
 PASSWORD = ''
 URL_DEV = 'http://core.dev002.local:8080/auth-gateway/employee/log-in'
 URL_TEST = 'http://siauth-tst.sibur.local:8080/employee/log-in'
-URL_PROD = 'http://siauth.sibur.local:8080/employee/log-in'
+#URL_PROD = 'http://siauth.sibur.local:8080/employee/log-in'
 IOT_IP = '127.0.0.1:7655'
+URL_PROD = 'https://vsk.iot.sibur.local/siauth/employee/log-in'
+
+
+
 
 #функция для аутентификации в siauth
 def get_token():
 	#создаем HTTP запрос с данными аутентификации
-	post_data = '{"basic_authentication":{"login:"","password":""}}'
-	response = requests.post(URL_DEV, data = post_data)
-	#получаем ответ, где по пути response.data.key.token находится действующий токен 
-	return response.json()#.data.key.token
+	post_data = '{"basic_authentication":{"login":"","password":""}}'#ввести сюда логин и пароль
+	response = requests.post(URL_PROD, data = post_data, verify = False)
+	token = response.json()['data']['authority']['token']
 
 #функция, собирающая объект аргумента для передачи по grpc (в соотвествии с proto файлом) 
 def proto(eui, token):
@@ -81,7 +84,7 @@ def toMesData(lastDataResponse):
 
 #Вызовы функций
 channel = getChannel()#создаем канал для подключения по grpc
-#token = get_token()#получаем токен от siauth
+token = get_token()#получаем токен от siauth
 euis = getEuiList(getDevices(channel, token).devices)#получаем список всех устройств на сервере ИоТ
 lastDataResponse = getDeviceData(euis, channel, token)#получаем последнюю информацию с этих устройств
 mesData = toMesData(lastDataResponse)#создаем объекты с информацией от датчиков(дата, имя, значение)
