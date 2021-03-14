@@ -10,7 +10,9 @@ from xml.etree import ElementTree
 from xml.dom import minidom
 import configparser
 
+#откидываем данные старше, чем столько дней
 DAYS_WITHOUT_UPD = 7
+#Путь до файл ридера historian'a
 SAVE_XML_PATH = 'F:\\Proficy Historian Data\\ImportFiles\\Incoming\\iot_last_data.xml'
 print(DAYS_WITHOUT_UPD)
 
@@ -28,14 +30,12 @@ def prettify(elem):
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="  ")
 
-
-def find_name(iiot_name):
+#возращает данные секции DEFAULT из конфиг файла, где описано соответствие имен iiot сервера
+#именам сервера эконс
+def getConfigData():
     config = configparser.ConfigParser()
-    config.read('settings.ini', encoding='utf-8-sig')
-    try:
-        return config['DEFAULT'][iiot_name]
-    except KeyError:
-        return -1
+    return config.read('settings.ini', encoding='utf-8-sig')['DEFAULT']
+
         
 
 #функция, генерирующая xml файл
@@ -43,16 +43,16 @@ def find_name(iiot_name):
 #Всё это определялось требованиями сервера ЭКОНС
 #т.к он читает только xml файлы строго определенной иерархии
 def toXML(mesDataObjList):
+    configData = getConfigData()
     root = xml.Element('Import')
     dataList = xml.Element('DataList')
     dataList.set('Version', '1.0.71')
     root.append(dataList)
     for i in mesDataObjList:
+        #Если датчик не присылал данные последние DAYS_WITHOUT_UPD дней, то выкидываем их
                 if i.ts < (datetime.now() - timedelta(days = DAYS_WITHOUT_UPD)):
                     continue
-                econs_name = find_name(str(i.TAGName))
-                if econs_name == -1:
-                    continue
+                econs_name = find_name(str(i.TAGName), configData)
                 tag = xml.SubElement(dataList, 'Tag')
                 tag.set('Name', econs_name)
                 data = xml.SubElement(tag, 'Data')
@@ -69,7 +69,7 @@ def toXML(mesDataObjList):
                 dataQ.text = 'Good'
     root = prettify(root)
     try:
-        file = open(SAVE_XML_PATH, 'w')#Прописать название файла для ЭКОНС файл ридера(да и путь)
+        file = open(SAVE_XML_PATH, 'w')
     except:
         file = open('test.xml', 'w')
     file.write(root)
