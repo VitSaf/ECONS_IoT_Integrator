@@ -8,6 +8,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 import mes_data as md
 from mes_data import toXML, getConfigData
 import configparser
+import requests
+
 
 #Основной скрипт, где описаны главные функции для связи с серверами
 #Здесь же происходят вызовы этих функций( в конце)
@@ -15,7 +17,7 @@ import configparser
 #сервер iiot
 IOT_IP = ''
 #сервер аутентификации
-URL_PROD_CLOAK = ''
+URL_PROD_CLOAK = 'https://s001dp-0093.dev002.local/auth/realms/sibur/protocol/openid-connect/token'
 #разница между временем сервера iiot и "ЭКОНС"(сколько часов добавить ко времени, полученному с iiot)
 HOURS_BETWEEN_SERVERS = 3
 
@@ -129,5 +131,6 @@ channel = getChannel()
 token = get_access_token()
 
 
-#get_last_data_from_iiot_for_all_devices(channel, token)
-get_last_data_from_iiot_for_choosen_devices(channel, token)
+get_last_data_from_iiot_for_all_devices(channel, token)
+#get_last_data_from_iiot_for_choosen_devices(channel, token)
+

@@ -34,7 +34,8 @@ def prettify(elem):
 #именам сервера эконс
 def getConfigData():
     config = configparser.ConfigParser()
-    return config.read('settings.ini', encoding='utf-8-sig')['DEFAULT']
+    config.read('settings.ini', encoding='utf-8-sig')
+    return config['DEFAULT']
 
         
 
