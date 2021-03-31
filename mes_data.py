@@ -1,8 +1,8 @@
 ﻿from concurrent import futures
 import logging
 import grpc
-import iiot_device_pb2
-import iiot_device_pb2_grpc
+import protos.sibur.iiot.iiot_device_pb2
+import protos.sibur.iiot.iiot_device_pb2_grpc
 from datetime import datetime, timedelta
 from google.protobuf.timestamp_pb2 import Timestamp
 import xml.etree.ElementTree as xml
@@ -53,7 +53,8 @@ def toXML(mesDataObjList):
         #Если датчик не присылал данные последние DAYS_WITHOUT_UPD дней, то выкидываем их
                 if i.ts < (datetime.now() - timedelta(days = DAYS_WITHOUT_UPD)):
                     continue
-                econs_name = find_name(str(i.TAGName), configData)
+                #econs_name = find_name(str(i.TAGName), configData)
+                econs_name = i.TAGName
                 tag = xml.SubElement(dataList, 'Tag')
                 tag.set('Name', econs_name)
                 data = xml.SubElement(tag, 'Data')
